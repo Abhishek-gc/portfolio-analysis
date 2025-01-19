@@ -42,21 +42,6 @@ def create_sparkline(hist_data, days=90):
         st.error(f"Error creating sparkline: {e}")
         return None
 
-def get_stock_suggestions(query):
-    """Search for stocks based on user input"""
-    try:
-        with open('nifty500_stocks.json', 'r') as f:
-            nifty500_stocks = json.load(f)
-    except FileNotFoundError:
-        if not create_nifty500_stocks_file():
-            return {}
-        with open('nifty500_stocks.json', 'r') as f:
-            nifty500_stocks = json.load(f)
-    
-    query = query.upper()
-    suggestions = {k: v for k, v in nifty500_stocks.items() 
-                  if query in k.upper() or query in v.upper()}
-    return suggestions
 
 def fetch_stock_data(ticker):
     """Fetch current stock data and recent performance"""
@@ -231,46 +216,6 @@ def display_stock_analysis(stock_data, hist_data, analysis):
     for risk in analysis['risks']:
         st.write(f"- {risk}")
 
-def load_nifty500_stocks():
-    """Load Nifty 500 stocks from a JSON file"""
-    try:
-        with open('./Portfolio analysis/nifty500_stocks.json', 'r') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        st.write("Attempting to create stocks file...")
-        if create_nifty500_stocks_file():
-            st.write("Successfully created stocks file")
-            with open('nifty500_stocks.json', 'r') as f:
-                return json.load(f)
-        else:
-            st.error("Failed to create stocks file")
-            return {}
-
-def create_nifty500_stocks_file():
-    """Create a JSON file with Nifty 500 stock symbols and names from CSV"""
-    try:
-        # Print current working directory
-        st.write(f"Current directory: {os.getcwd()}")
-        
-        # Check if file exists
-        csv_path = 'Portfolio analysis/nifty500_Tickers.csv'
-        if not os.path.exists(csv_path):
-            st.error(f"CSV file not found at: {csv_path}")
-            return False
-            
-        # Read the CSV file
-        df = pd.read_csv(csv_path)
-        st.write(f"Found {len(df)} stocks in CSV")
-        
-        # Convert to dictionary format {Ticker: Symbol}
-        nifty500_stocks = dict(zip(df['Ticker'], df['Symbol']))
-        
-        with open('nifty500_stocks.json', 'w') as f:
-            json.dump(nifty500_stocks, f)
-        return True
-    except Exception as e:
-        st.error(f"Error creating Nifty 500 stocks file: {str(e)}")
-        return False
 
 def analyze_portfolio(pnl_df):
     """Analyze entire portfolio and get recommendations for each stock"""
