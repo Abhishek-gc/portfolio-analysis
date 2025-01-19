@@ -5,12 +5,13 @@ import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
 import google.generativeai as genai
-import json
-import os
+import json, os
+from dotenv import load_dotenv
 import plotly.express as px
 
 # Configure Gemini API
-genai.configure(api_key=os.getenv("OPENAI_API_KEY"))
+load_dotenv()
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 def create_sparkline(hist_data, days=90):
     """Create a sparkline chart for 3-month price movement"""
