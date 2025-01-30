@@ -16,13 +16,16 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 def create_sparkline(hist_data, days=90):
     """Create a sparkline chart for 3-month price movement"""
     try:
-        # Get last 3 months of closing prices
+        # Get last 'days' of closing prices
         prices = hist_data['Close'].tail(days)
         
+        # Check if prices Series is empty
+        if prices.empty:
+            st.error("Insufficient data to create sparkline.")
+            return None
+        
         # Create figure with transparent background
-        fig = px.line(prices, 
-                     height=50, 
-                     width=200)
+        fig = px.line(prices, height=50, width=200)
         
         # Update layout for minimal design
         fig.update_layout(
