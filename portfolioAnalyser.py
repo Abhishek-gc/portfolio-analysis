@@ -230,6 +230,7 @@ def analyze_portfolio(pnl_df):
             # Calculate cost per share
             cost_per_share = row['buy_price']  # Using lowercase column name
             quantity = row['quantity']  # Using lowercase column name
+            current_price = stock_data['currentPrice']
             current_value = stock_data['currentPrice'] * quantity
             profit_loss = current_value - row['total_cost']
             
@@ -241,6 +242,7 @@ def analyze_portfolio(pnl_df):
                     'investment': quantity,
                     'cost': row['total_cost'],
                     'current_value': current_value,
+                    'current_price': current_price,
                     'profit_loss': profit_loss,
                     'recommendation': analysis['recommendation'],
                     'reasons': analysis['reasons'],
@@ -277,6 +279,7 @@ def display_portfolio_analysis(portfolio_analysis):
     
     # Individual Stock Analysis
     for stock in portfolio_analysis:
+       
         with st.expander(f"{stock['ticker']} (P&L: ₹{stock['profit_loss']:,.2f})", expanded=True):
             col1, col2 = st.columns([1, 1])
             
@@ -284,8 +287,9 @@ def display_portfolio_analysis(portfolio_analysis):
             with col1:
                 st.subheader("Investment Details:")
                 st.write(f"**Quantity:** {stock['investment']}")
-                st.write(f"**Cost:** ₹{stock['cost']/stock['investment']:.2f}")
-                st.write(f"**Current Value:** ₹{stock['current_value']:,.2f}")
+                st.write(f"**Purchase price:** ₹{stock['cost']/stock['investment']:.2f}")
+                st.write(f"**Current price:** ₹{stock['current_price']:,.2f}")
+                st.write(f"**Current value:** ₹{stock['current_value']:,.2f}")
                 
                 st.write("")  # Add spacing
                 
