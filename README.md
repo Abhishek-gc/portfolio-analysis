@@ -10,5 +10,10 @@ Designed and developed a **Portfolio Analysis** application to simplify investme
 
 Deployed to Onrender Cloud.
 
-**App Link**: [Portfolio Analysis App Link](#)
+**App Link**: https://portfolioanalysis-exej.onrender.com
+
+----
+### App Screenshot-
+
+![Portfolio Analysis App Screenshot](samplePortfolio.png)
 
