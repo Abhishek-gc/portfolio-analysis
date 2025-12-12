@@ -16,18 +16,25 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 def create_sparkline(hist_data, days=90):
     """Create a sparkline chart for 3-month price movement"""
     try:
-        # Get last 'days' of closing prices
         prices = hist_data['Close'].tail(days)
-        
-        # Check if prices Series is empty
+
         if prices.empty:
             st.error("Insufficient data to create sparkline.")
             return None
-        
-        # Create figure with transparent background
-        fig = px.line(prices, height=50, width=200)
-        
-        # Update layout for minimal design
+
+        # Convert to DataFrame so Plotly can parse it safely
+        df = prices.reset_index()
+        df.columns = ["Date", "Close"]
+
+        fig = px.line(
+            df,
+            x="Date",
+            y="Close",
+            height=50,
+            width=200
+        )
+
+        # Minimalist design
         fig.update_layout(
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
@@ -36,12 +43,13 @@ def create_sparkline(hist_data, days=90):
             xaxis=dict(visible=False),
             yaxis=dict(visible=False)
         )
-        
-        # Color based on price trend
-        color = 'green' if prices.iloc[-1] > prices.iloc[0] else 'red'
+
+        # Trend color
+        color = 'green' if df["Close"].iloc[-1] > df["Close"].iloc[0] else 'red'
         fig.update_traces(line_color=color)
-        
+
         return fig
+
     except Exception as e:
         st.error(f"Error creating sparkline: {e}")
         return None
@@ -150,7 +158,7 @@ def get_chatgpt_recommendation(stock_data, hist_data, buy_price, quantity):
     
     try:
         # Initialize Gemini model
-        model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        model = genai.GenerativeModel('gemini-2.5-flash-lite')
         
         # Generate response
         response = model.generate_content(prompt)
